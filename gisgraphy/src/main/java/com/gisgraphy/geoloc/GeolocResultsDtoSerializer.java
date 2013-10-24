@@ -1,24 +1,24 @@
 /*******************************************************************************
  *   Gisgraphy Project 
- * 
+ *
  *   This library is free software; you can redistribute it and/or
  *   modify it under the terms of the GNU Lesser General Public
  *   License as published by the Free Software Foundation; either
  *   version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  *   This library is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  *   Lesser General Public License for more details.
- * 
+ *
  *   You should have received a copy of the GNU Lesser General Public
  *   License along with this library; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
- * 
+ *
  *  Copyright 2008  Gisgraphy project 
  *  David Masclet <davidmasclet@gisgraphy.com>
- *  
- *  
+ *
+ *
  *******************************************************************************/
 package com.gisgraphy.geoloc;
 
@@ -57,22 +57,21 @@ import com.sun.syndication.io.SyndFeedOutput;
 
 /**
  * serialize @link {@link GeolocResultsDto} into several formats
- * 
+ *
  * @author <a href="mailto:david.masclet@gisgraphy.com">David Masclet</a>
  */
 public class GeolocResultsDtoSerializer implements
-	IGeolocResultsDtoSerializer {
-    
+        IGeolocResultsDtoSerializer {
+
     public final static String START_PAGINATION_INDEX_EXTRA_PARAMETER = "startPaginationIndex";
-    
-    
+
+
     /**
      * The logger
      */
     protected static final Logger logger = LoggerFactory
-	    .getLogger(GeolocResultsDtoSerializer.class);
+            .getLogger(GeolocResultsDtoSerializer.class);
 
-  
 
     /*
      * (non-Javadoc)
@@ -84,127 +83,123 @@ public class GeolocResultsDtoSerializer implements
      * com.gisgraphy.domain.valueobject.GeolocResultsDto)
      */
     public void serialize(OutputStream outputStream, OutputFormat outputFormat,
-	    GeolocResultsDto geolocResultsDto, boolean indent,Map<String,Object> extraParameters) {
-	if (!OutputFormatHelper.isFormatSupported(outputFormat,GisgraphyServiceType.GEOLOC)) {
-	    throw new UnsupportedFormatException(outputFormat
-		    + " is not applicable for Geoloc");
-	} 
-	   
-	if (outputFormat == OutputFormat.JSON || outputFormat == OutputFormat.PHP || outputFormat == OutputFormat.PYTHON  || outputFormat == OutputFormat.RUBY || outputFormat == OutputFormat.XML || outputFormat == OutputFormat.YAML) {
-		serializeWithUniveraslSerializer(outputStream, geolocResultsDto,  indent, outputFormat,extraParameters);
-	} else 	if (outputFormat==OutputFormat.ATOM){
-	   int  startPaginationIndex = getStartPaginationIndex(extraParameters);
-	    serializeToFeed(outputStream,geolocResultsDto,OutputFormat.ATOM_VERSION, startPaginationIndex);
-	}
-	else if (outputFormat==OutputFormat.GEORSS) {
-	    int  startPaginationIndex = getStartPaginationIndex(extraParameters);
-	    serializeToFeed(outputStream,geolocResultsDto,OutputFormat.RSS_VERSION, startPaginationIndex);
-	}
-	else {
-		serializeWithUniveraslSerializer(outputStream, geolocResultsDto,  indent, OutputFormat.XML,extraParameters);
-	}
+                          GeolocResultsDto geolocResultsDto, boolean indent, Map<String, Object> extraParameters) {
+        if (!OutputFormatHelper.isFormatSupported(outputFormat, GisgraphyServiceType.GEOLOC)) {
+            throw new UnsupportedFormatException(outputFormat
+                    + " is not applicable for Geoloc");
+        }
+
+        if (outputFormat == OutputFormat.JSON || outputFormat == OutputFormat.PHP || outputFormat == OutputFormat.PYTHON || outputFormat == OutputFormat.RUBY || outputFormat == OutputFormat.XML || outputFormat == OutputFormat.YAML) {
+            serializeWithUniveraslSerializer(outputStream, geolocResultsDto, indent, outputFormat, extraParameters);
+        } else if (outputFormat == OutputFormat.ATOM) {
+            int startPaginationIndex = getStartPaginationIndex(extraParameters);
+            serializeToFeed(outputStream, geolocResultsDto, OutputFormat.ATOM_VERSION, startPaginationIndex);
+        } else if (outputFormat == OutputFormat.GEORSS) {
+            int startPaginationIndex = getStartPaginationIndex(extraParameters);
+            serializeToFeed(outputStream, geolocResultsDto, OutputFormat.RSS_VERSION, startPaginationIndex);
+        } else {
+            serializeWithUniveraslSerializer(outputStream, geolocResultsDto, indent, OutputFormat.XML, extraParameters);
+        }
     }
 
     private int getStartPaginationIndex(Map<String, Object> extraParameters) {
-	if (extraParameters!= null){
-	Object startPaginationIndexObject = extraParameters.get(START_PAGINATION_INDEX_EXTRA_PARAMETER);
-	if (startPaginationIndexObject != null && startPaginationIndexObject instanceof Integer){
-	    return (Integer) startPaginationIndexObject;
-	}
-	}
-	return 1;
+        if (extraParameters != null) {
+            Object startPaginationIndexObject = extraParameters.get(START_PAGINATION_INDEX_EXTRA_PARAMETER);
+            if (startPaginationIndexObject != null && startPaginationIndexObject instanceof Integer) {
+                return (Integer) startPaginationIndexObject;
+            }
+        }
+        return 1;
     }
-    
-    private void serializeWithUniveraslSerializer(OutputStream outputStream, GeolocResultsDto geolocResultsDto,boolean indent, OutputFormat format,Map<String,Object> extraParameters) {
-	 try {
-	     UniversalSerializer.getInstance().write(outputStream, geolocResultsDto,  indent,extraParameters, format);
-	    } catch (Exception e) {
-		throw new ServiceException(e);
-	    }
-	
+
+    private void serializeWithUniveraslSerializer(OutputStream outputStream, GeolocResultsDto geolocResultsDto, boolean indent, OutputFormat format, Map<String, Object> extraParameters) {
+        try {
+            UniversalSerializer.getInstance().write(outputStream, geolocResultsDto, indent, extraParameters, format);
+        } catch (Exception e) {
+            throw new ServiceException(e);
+        }
+
     }
-    
-   
 
 
     @SuppressWarnings("unchecked")
     private void serializeToFeed(OutputStream outputStream,
-	    GeolocResultsDto geolocResultsDto,String feedVersion, int startPaginationIndex) {
-	SyndFeed synFeed = new SyndFeedImpl();
-	Writer oWriter = null;
-	try {
+                                 GeolocResultsDto geolocResultsDto, String feedVersion, int startPaginationIndex) {
+        SyndFeed synFeed = new SyndFeedImpl();
+        Writer oWriter = null;
+        try {
 
-	    synFeed.setFeedType(feedVersion);
-	    
+            synFeed.setFeedType(feedVersion);
 
-	    synFeed.setTitle(Constants.FEED_TITLE);
-	    synFeed.setLink(Constants.FEED_LINK);
-	    synFeed.setDescription(Constants.FEED_DESCRIPTION);
-	    List<SyndEntry> entries = new ArrayList<SyndEntry>();
 
-	    for (GisFeatureDistance gisFeatureDistance : geolocResultsDto
-		    .getResult()) {
+            synFeed.setTitle(Constants.FEED_TITLE);
+            synFeed.setLink(Constants.FEED_LINK);
+            synFeed.setDescription(Constants.FEED_DESCRIPTION);
+            List<SyndEntry> entries = new ArrayList<SyndEntry>();
 
-		SyndEntry entry = new SyndEntryImpl();
-		GeoRSSModule geoRSSModuleGML = new GMLModuleImpl();
-		OpenSearchModule openSearchModule = new OpenSearchModuleImpl();
+            for (GisFeatureDistance gisFeatureDistance : geolocResultsDto
+                    .getResult()) {
 
-		geoRSSModuleGML.setLatitude(gisFeatureDistance.getLat());
-		geoRSSModuleGML.setLongitude(gisFeatureDistance.getLng());
+                SyndEntry entry = new SyndEntryImpl();
+                GeoRSSModule geoRSSModuleGML = new GMLModuleImpl();
+                OpenSearchModule openSearchModule = new OpenSearchModuleImpl();
 
-		openSearchModule
-			.setItemsPerPage(Pagination.DEFAULT_MAX_RESULTS);
-		openSearchModule
-			.setTotalResults(geolocResultsDto.getNumFound());
-		openSearchModule.setStartIndex(startPaginationIndex);
+                geoRSSModuleGML.setLatitude(gisFeatureDistance.getLat());
+                geoRSSModuleGML.setLongitude(gisFeatureDistance.getLng());
 
-		entry.getModules().add(openSearchModule);
-		entry.getModules().add(geoRSSModuleGML);
-		entry.setTitle(gisFeatureDistance.getName());
-		entry.setAuthor(com.gisgraphy.domain.Constants.MAIL_ADDRESS);
-		entry
-			.setLink(Constants.GISFEATURE_BASE_URL+
-				+ gisFeatureDistance.getFeatureId());
-		SyndContent description = new SyndContentImpl();
-		description.setType(OutputFormat.ATOM.getContentType());
-		description.setValue(gisFeatureDistance.getName());
-		entry.setDescription(description);
-		entries.add(entry);
-	    }
-	    
-	    synFeed.setEntries(entries);
+                openSearchModule
+                        .setItemsPerPage(Pagination.DEFAULT_MAX_RESULTS);
+                openSearchModule
+                        .setTotalResults(geolocResultsDto.getNumFound());
+                openSearchModule.setStartIndex(startPaginationIndex);
 
-	    try {
-		oWriter = new OutputStreamWriter(outputStream, Constants.CHARSET);
-	    } catch (UnsupportedEncodingException e) {
-		throw new RuntimeException("unknow encoding "+Constants.CHARSET);
-	    }
+                entry.getModules().add(openSearchModule);
+                entry.getModules().add(geoRSSModuleGML);
+                entry.setTitle(gisFeatureDistance.getName());
+                entry.setAuthor(com.gisgraphy.domain.Constants.MAIL_ADDRESS);
+                entry
+                        .setLink(Constants.GISFEATURE_BASE_URL +
+                                +gisFeatureDistance.getFeatureId());
+                SyndContent description = new SyndContentImpl();
+                description.setType(OutputFormat.ATOM.getContentType());
+                description.setValue(gisFeatureDistance.getName());
+                entry.setDescription(description);
+                entries.add(entry);
+            }
 
-	    // Copy synfeed to output
-	    SyndFeedOutput output = new SyndFeedOutput();
-	    try {
-		output.output(synFeed, oWriter);
-		 // Flush
-		    oWriter.flush();
-	    } catch (Exception e) {
-		throw new RuntimeException(e);
-	    }
+            synFeed.setEntries(entries);
 
-	   
-	} finally {
-	    if (oWriter != null)
-		try {
-		    oWriter.close();
-		} catch (IOException e) {
-		    throw new RuntimeException(e);
-		}
-	    if (outputStream != null)
-		try {
-		    outputStream.close();
-		} catch (IOException e) {
-		    throw new RuntimeException(e);
-		}
-	}
+            try {
+                oWriter = new OutputStreamWriter(outputStream, Constants.CHARSET);
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("unknow encoding " + Constants.CHARSET);
+            }
+
+            // Copy synfeed to output
+            SyndFeedOutput output = new SyndFeedOutput();
+            try {
+                output.output(synFeed, oWriter);
+                // Flush
+                oWriter.flush();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+
+        } finally {
+            if (oWriter != null)
+                try {
+                    oWriter.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            if (outputStream != null)
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+        }
 
     }
 

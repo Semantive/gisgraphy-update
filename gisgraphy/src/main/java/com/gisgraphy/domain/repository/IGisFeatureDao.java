@@ -162,4 +162,12 @@ public interface IGisFeatureDao extends IGisDao<GisFeature> {
      */
     public long getMaxFeatureId();
 
+
+    /**
+     * Find a GisFeature with geonamesId (featureId) given.
+     *
+     * @param geonamesId geonamesId of requested object
+     * @return GisFeature w/ requested geonamesId
+     */
+    public GisFeature getFeatureByGeonamesId(final Long geonamesId);
 }

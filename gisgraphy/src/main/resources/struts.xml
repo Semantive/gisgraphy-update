@@ -180,7 +180,7 @@
            <result name="success" type="freemarker">/WEB-INF/views/reversegeocoding.ftl</result>
            <result name="popup" type="freemarker">/WEB-INF/views/reversegeocoding.ftl</result>
         </action>
-        <action name="donateCancel" >
+            <action name="donateCancel" >
              <result name="success" type="freemarker">/WEB-INF/views/donatecancel.ftl</result>
         </action>
          <action name="donateSuccess" >

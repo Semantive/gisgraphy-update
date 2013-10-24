@@ -1,14 +1,13 @@
-# IDE project files #
+# old IDE project files #
 .amateras
 .classpath
 .project
 .pydevproject
-*.iml
-
-
-.idea/
 .settings/
 
+# IntellijIDEA's files #
+*.iml
+.idea/
 
 # Linux garbage #
 .directory
@@ -25,3 +24,4 @@ target/
 *.jar
 *.war
 *.ear
+

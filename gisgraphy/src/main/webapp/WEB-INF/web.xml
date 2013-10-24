@@ -297,8 +297,7 @@
 		<servlet-name>fulltext service</servlet-name>
 		<url-pattern>/fulltext/*</url-pattern>
 	</servlet-mapping>
-	
-	
+
     <servlet-mapping>
         <servlet-name>dwr-invoker</servlet-name>
         <url-pattern>/dwr/*</url-pattern>

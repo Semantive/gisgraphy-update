@@ -50,9 +50,9 @@ import com.gisgraphy.serializer.common.OutputFormat;
  * @author <a href="mailto:david.masclet@gisgraphy.com">David Masclet</a>
  * @see GeolocServlet
  */
-public class FulltextServlet extends GisgraphyServlet {
-
-    
+public class FulltextServlet
+    extends GisgraphyServlet
+{
     /*
      * (non-Javadoc)
      * 

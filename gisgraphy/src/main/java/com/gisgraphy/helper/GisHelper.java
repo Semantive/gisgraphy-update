@@ -37,8 +37,9 @@ import com.gisgraphy.domain.valueobject.SRID;
  */
 public class GisHelper {
 
-    private static final double COS0 = Math.cos(0);
-    private static final double SIN90 = Math.sin(90);
+    // srsly, wtf
+//    private static final double COS0 = Math.cos(0);
+//    private static final double SIN90 = Math.sin(90);
     
     private static final String INTERSECTION = "&&";
     private static final String BBOX = "BOX3D";

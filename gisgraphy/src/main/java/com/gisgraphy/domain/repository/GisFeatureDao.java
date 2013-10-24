@@ -26,6 +26,8 @@ import java.util.List;
 
 import javax.persistence.PersistenceException;
 
+import com.gisgraphy.domain.geoloc.entity.Adm;
+import com.gisgraphy.domain.geoloc.entity.City;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
@@ -168,4 +170,22 @@ public class GisFeatureDao extends GenericGisDao<GisFeature> implements
 		});
     }
 
+    public GisFeature getFeatureByGeonamesId(final Long geonamesId)
+    {
+        return (GisFeature) this.getHibernateTemplate().execute(
+            new HibernateCallback()
+            {
+                public Object doInHibernate(final Session session)
+                    throws PersistenceException
+                {
+                    Query query = session.createQuery("SELECT feature FROM " + GisFeature.class.getSimpleName()
+                        + " as feature WHERE feature.featureId = :featureId");
+                    query.setParameter("featureId", geonamesId);
+
+                    return query.uniqueResult();
+                }
+            }
+        );
+    }
 }
+

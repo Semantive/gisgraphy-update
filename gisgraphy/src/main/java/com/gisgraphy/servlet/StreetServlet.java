@@ -100,51 +100,48 @@ public class StreetServlet extends GisgraphyServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-	    throws ServletException, IOException {
-	OutputFormat format = OutputFormat.getDefault();
-	try {
-	    format = setResponseContentType(req, resp);
-	    // check empty query
-	    if (HTMLHelper
-		    .isParametersEmpty(req, GeolocQuery.LAT_PARAMETER, GeolocQuery.LONG_PARAMETER) && HTMLHelper
-		    .isParametersEmpty(req, StreetSearchQuery.NAME_PARAMETER)) {
-		sendCustomError(ResourceBundle.getBundle(
-			Constants.BUNDLE_ERROR_KEY).getString(
-			"error.emptyLatLong"), format, resp,req);
-		return;
-	    }
-	    StreetSearchQuery query = StreetSearchQueryHttpBuilder.getInstance().buildFromHttpRequest(req);
-	    if (logger.isDebugEnabled()){
-	    logger.debug("query=" + query);
-	    }
-	    String UA = req.getHeader("User-Agent");
-	    String referer = req.getHeader("Referer");
-	    if (logger.isInfoEnabled()){
-		logger.info("A street request from "+req.getRemoteHost()+" / "+req.getRemoteAddr()+" was received , Referer : "+referer+" , UA : "+UA);
-	    }
+            throws ServletException, IOException {
+        OutputFormat format = OutputFormat.getDefault();
+        try {
+            format = setResponseContentType(req, resp);
+            // check empty query
+            if (HTMLHelper
+                    .isParametersEmpty(req, GeolocQuery.LAT_PARAMETER, GeolocQuery.LONG_PARAMETER) && HTMLHelper
+                    .isParametersEmpty(req, StreetSearchQuery.NAME_PARAMETER)) {
+                sendCustomError(ResourceBundle.getBundle(
+                        Constants.BUNDLE_ERROR_KEY).getString(
+                        "error.emptyLatLong"), format, resp, req);
+                return;
+            }
+            StreetSearchQuery query = StreetSearchQueryHttpBuilder.getInstance().buildFromHttpRequest(req);
+            if (logger.isDebugEnabled()) {
+                logger.debug("query=" + query);
+            }
+            String UA = req.getHeader("User-Agent");
+            String referer = req.getHeader("Referer");
+            if (logger.isInfoEnabled()) {
+                logger.info("A street request from " + req.getRemoteHost() + " / " + req.getRemoteAddr() + " was received , Referer : " + referer + " , UA : " + UA);
+            }
 
-	    streetSearchEngine.executeAndSerialize(query, resp
-		    .getOutputStream());
-	} catch (RuntimeException e) {
-	    if (e instanceof GisgraphyCommunicationException){
-		logger.warn("A communication error has occured, maybe the socket has been closed probably because the client has cancel the request, it is probably not important");
-		return;
-	    }
-	    logger.error("error while execute a streetsearch query from http request : " + e,e);
-	    String errorMessage = isDebugMode() ? " : " + e.getMessage() : "";
-	    sendCustomError(ResourceBundle
-		    .getBundle(Constants.BUNDLE_ERROR_KEY).getString(
-			    "error.error")
-		    + errorMessage, format, resp,req);
-	    return;
-	}
+            streetSearchEngine.executeAndSerialize(query, resp
+                    .getOutputStream());
+        } catch (RuntimeException e) {
+            if (e instanceof GisgraphyCommunicationException) {
+                logger.warn("A communication error has occured, maybe the socket has been closed probably because the client has cancel the request, it is probably not important");
+                return;
+            }
+            logger.error("error while execute a streetsearch query from http request : " + e, e);
+            String errorMessage = isDebugMode() ? " : " + e.getMessage() : "";
+            sendCustomError(ResourceBundle
+                    .getBundle(Constants.BUNDLE_ERROR_KEY).getString(
+                            "error.error")
+                    + errorMessage, format, resp, req);
+            return;
+        }
 
     }
 
 
- 
-
-   
     /**
      * @param streetSearchEngine
      *                the streetSearchEngine to set

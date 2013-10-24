@@ -50,13 +50,8 @@ import com.gisgraphy.serializer.common.OutputFormat;
  * 
  * @author <a href="mailto:david.masclet@gisgraphy.com">David Masclet</a>
  */
-public class GeolocServlet extends GisgraphyServlet {
-
-   
-    
-    
-
-
+public class GeolocServlet extends GisgraphyServlet
+{
     /*
      * (non-Javadoc)
      * 
@@ -100,40 +95,44 @@ public class GeolocServlet extends GisgraphyServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-	    throws ServletException, IOException {
-	OutputFormat format = OutputFormat.getDefault();
-	try {
-	    format = setResponseContentType(req, resp);
-	    // check empty query
-	    if (HTMLHelper
-		    .isParametersEmpty(req, GeolocQuery.LAT_PARAMETER, GeolocQuery.LONG_PARAMETER)) {
-		sendCustomError(ResourceBundle.getBundle(
-			Constants.BUNDLE_ERROR_KEY).getString(
-			"error.emptyLatLong"), format, resp,req);
-		return;
-	    }
-	    GeolocQuery query = GeolocQueryHttpBuilder.getInstance().buildFromHttpRequest(req);
-	    if (logger.isDebugEnabled()){
-	    logger.debug("query=" + query);
-	    logger.debug("fulltext engine=" + geolocSearchEngine);
-	    }
-	    String UA = req.getHeader("User-Agent");
-	    String referer = req.getHeader("Referer");
-	    if (logger.isInfoEnabled()){
-		logger.info("A geoloc request from "+req.getRemoteHost()+" / "+req.getRemoteAddr()+" was received , Referer : "+referer+" , UA : "+UA);
-	    }
+            throws ServletException, IOException
+    {
+        OutputFormat format = OutputFormat.getDefault();
+        try {
+            format = setResponseContentType(req, resp);
+            // check empty query
+            if (HTMLHelper
+                    .isParametersEmpty(req, GeolocQuery.LAT_PARAMETER, GeolocQuery.LONG_PARAMETER)) {
+                sendCustomError(ResourceBundle.getBundle(
+                        Constants.BUNDLE_ERROR_KEY).getString(
+                        "error.emptyLatLong"), format, resp, req);
+                return;
+            }
 
-	    geolocSearchEngine.executeAndSerialize(query, resp
-		    .getOutputStream());
-	} catch (RuntimeException e) {
-	    logger.error("error while execute a geoloc query from http request : " + e,e);
-	    String errorMessage = isDebugMode() ? " : " + e.getMessage() : "";
-	    sendCustomError(ResourceBundle
-		    .getBundle(Constants.BUNDLE_ERROR_KEY).getString(
-			    "error.error")
-		    + errorMessage, format, resp,req);
-	    return;
-	}
+            GeolocQuery query = GeolocQueryHttpBuilder.getInstance().buildFromHttpRequest(req);
+            if (logger.isDebugEnabled()) {
+                logger.debug("query=" + query);
+                logger.debug("fulltext engine=" + geolocSearchEngine);
+            }
+
+            String UA = req.getHeader("User-Agent");
+            String referer = req.getHeader("Referer");
+            if (logger.isInfoEnabled()) {
+                logger.info("A geoloc request from " + req.getRemoteHost() + " / " + req.getRemoteAddr() + " was received , Referer : " + referer + " , UA : " + UA);
+            }
+
+            geolocSearchEngine.executeAndSerialize(query, resp
+                    .getOutputStream());
+
+        } catch (RuntimeException e) {
+            logger.error("error while execute a geoloc query from http request : " + e, e);
+            String errorMessage = isDebugMode() ? " : " + e.getMessage() : "";
+            sendCustomError(ResourceBundle
+                    .getBundle(Constants.BUNDLE_ERROR_KEY).getString(
+                            "error.error")
+                    + errorMessage, format, resp, req);
+            return;
+        }
 
     }
 
